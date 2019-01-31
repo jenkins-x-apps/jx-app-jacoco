@@ -2,7 +2,7 @@
 
 jx-app-jacoco provides a means for transferring a Jacoco XML code coverage report 
 from a [Jenkins X](https://jenkins-x.github.io/jenkins-x-website/) build to 
-a fact in the PipelineActivity CRD.
+a `Fact` in the `PipelineActivity` custom resource.
 
 You must have a Jenkins X cluster to install and use the jx-app-jacoco app.  If
 you do not have a Jenkins X cluster and you would like to try it out, the 
@@ -14,12 +14,14 @@ is a great place to start.
 Using the [jx command line tool](https://jenkins-x.io/getting-started/install/), run 
 the following command.
 
-`jx add app -n "" jx-app-jacoco --repository "http://chartmuseum.jenkins-x.io"`
+`jx add app jx-app-jacoco --repository "http://chartmuseum.jenkins-x.io"`
 
 NOTE: The syntax of this command is evolving and will change.
 
 Upon successful installation, you should see jx-app-jacoco in the list of pods 
-running in your cluster.
+running in your cluster - it will be called `jx-app-jacoco-jx-app-jacoco`.
+
+NOTE: The name repitition is a common pattern in helm,
 
 `kubectl get pods`
 
@@ -61,6 +63,8 @@ Example Maven POM file:
      </plugins>
     </build>
 
+NOTE: We have an open issue to not have to generate the XML report in the project.
+
 Ensure that your Jenkinsfile includes the following command so the Jacoco XML report is 
 collected.
 
@@ -83,7 +87,7 @@ Example JenkinsFile:
 
 Jacoco code coverage facts will now be stored in the PipelineActivity CRD for each build.
 
-`kubectl get act -o yaml <org>-<repo>-<branch-name>-<build-number>`
+`kubectl get act -o yaml <org>-<repo>-pr-<pull request number>-<build-number>`
 
       factType: jx.coverage
         id: 0
