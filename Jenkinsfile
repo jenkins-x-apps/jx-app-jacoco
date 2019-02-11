@@ -78,8 +78,7 @@ pipeline {
           }
           dir ('/home/jenkins/go/src/github.com/jenkins-x-apps/jx-app-jacoco/scripts') {
             // Run updatebot to update other repos
-            sh './scripts/updatebot.sh'
-            sh 'jx step create version pr -n $GITHUB_ORG/$APP_NAME -v $(cat VERSION)'
+            sh './updatebot.sh'
           }
         }
       }
