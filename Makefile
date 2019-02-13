@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+OS := $(shell uname)
 
 GO_VARS := GO111MODULE=on GO15VENDOREXPERIMENT=1 CGO_ENABLED=0
 BUILDFLAGS := ''
@@ -14,7 +15,7 @@ os = $(word 1, $@)
 
 # setting some defaults for skaffold 
 DOCKER_REGISTRY ?= localhost:5000
-VERSION ?= latest
+VERSION ?= $(shell cat VERSION)
 
 FGT := $(GOPATH)/bin/fgt
 GOLINT := $(GOPATH)/bin/golint
@@ -59,6 +60,23 @@ skaffold-run: linux ## Runs 'skaffold run'
 .PHONY: help
 help: ## Prints this help
 	@grep -E '^[^.]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-40s\033[0m %s\n", $$1, $$2}'	
+
+.PHONY: tag
+tag: ## Updates the release version tags and commits
+ifeq ($(OS),Darwin)
+	sed -i "" -e "s/version:.*/version: $(VERSION)/" ./charts/jx-app-jacoco/Chart.yaml
+	sed -i "" -e "s/tag: .*/tag: $(VERSION)/" ./charts/jx-app-jacoco/values.yaml
+else ifeq ($(OS),Linux)
+	sed -i -e "s/version:.*/version: $(VERSION)/" ./charts/jx-app-jacoco/Chart.yaml
+	sed -i -e "s/tag: .*/tag: $(VERSION)/" ./charts/jx-app-jacoco/values.yaml
+else
+	echo "platform $(OS) not supported to tag with"
+	exit -1
+endif
+	git add --all
+	git commit -m "release $(VERSION)" --allow-empty # if first release then no version update is performed
+	git tag -fa v$(VERSION) -m "Release version $(VERSION)"
+	git push origin HEAD v$(VERSION)
 
 # Targets to get some Go tools
 $(FGT):
