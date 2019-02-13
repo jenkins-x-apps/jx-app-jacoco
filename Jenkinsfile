@@ -14,15 +14,12 @@ pipeline {
         }
         environment {
           PREVIEW_VERSION = "0.0.0-SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER"
-          PREVIEW_NAMESPACE = "$APP_NAME-$BRANCH_NAME".toLowerCase()
-          HELM_RELEASE = "$PREVIEW_NAMESPACE".toLowerCase()
         }
         steps {
           dir ('/home/jenkins/go/src/github.com/jenkins-x-apps/jx-app-jacoco') {
             checkout scm
             sh "make linux test check"
             sh 'export VERSION=$PREVIEW_VERSION && make skaffold-build'
-
             sh "jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:$PREVIEW_VERSION"
           }
         }
@@ -64,17 +61,15 @@ pipeline {
         steps {
           dir ('/home/jenkins/go/src/github.com/jenkins-x-apps/jx-app-jacoco') {
             // release the docker image
-            sh 'docker build -t docker.io/$ORG/$APP_NAME:\$(cat VERSION) .'
-            sh 'docker push docker.io/$ORG/$APP_NAME:\$(cat VERSION)'
-            sh 'docker tag docker.io/$ORG/$APP_NAME:\$(cat VERSION) docker.io/$ORG/$APP_NAME:latest'
-            sh 'docker push docker.io/$ORG/$APP_NAME:latest'
+            sh 'make skaffold-build DOCKER_REGISTRY=docker.io VERSION=\$(cat VERSION)'
+            sh 'make skaffold-build DOCKER_REGISTRY=docker.io VERSION=latest'
           }
           dir ('/home/jenkins/go/src/github.com/jenkins-x-apps/jx-app-jacoco/charts/jx-app-jacoco') {
             // release the helm chart
             sh 'jx step helm release'
           }
           dir ('/home/jenkins/go/src/github.com/jenkins-x-apps/jx-app-jacoco') {
-            sh 'jx step changelog --version v\$(cat VERSION)'
+            sh 'jx step changelog --version v\$(cat VERSION) -p \$(git for-each-ref --sort=-creatordate --format="%(objectname)" refs/tags | sed -n 2p) -r \$(git for-each-ref  --sort=-creatordate --format="%(objectname)" refs/tags | sed -n 1p)'
             // disabling 'jx create version pr' until builder images contains this command (HF)
             // sh 'jx step create version pr -n $GITHUB_ORG/$APP_NAME -v $(cat VERSION)'
           }
