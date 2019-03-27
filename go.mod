@@ -7,8 +7,7 @@ require (
 	github.com/cenkalti/backoff v2.0.0+incompatible
 	github.com/dlclark/regexp2 v1.1.6 // indirect
 	github.com/docker/spdystream v0.0.0-20181023171402-6480d4af844c // indirect
-	github.com/golang/lint v0.0.0-20181217174547-8f45f776aaf1 // indirect
-	github.com/hashicorp/go-retryablehttp v0.5.2
+	github.com/hashicorp/go-retryablehttp v0.5.2 // indirect
 	github.com/jenkins-x/jx v1.3.928
 	github.com/magiconair/properties v1.8.0
 	github.com/pkg/errors v0.8.1
@@ -21,9 +20,7 @@ require (
 	k8s.io/apiextensions-apiserver v0.0.0-20181128195303-1f84094d7e8e
 	k8s.io/apimachinery v0.0.0-20190122181752-bebe27e40fb7
 	k8s.io/client-go v9.0.0+incompatible
-	k8s.io/klog v0.1.0 // indirect
 	k8s.io/metrics v0.0.0-20190205053707-d984453de47b // indirect
-	sigs.k8s.io/structured-merge-diff v0.0.0-20190130003954-e5e029740eb8 // indirect
 )
 
 replace github.com/heptio/sonobuoy => github.com/jenkins-x/sonobuoy v0.11.7-0.20190131193045-dad27c12bf17
