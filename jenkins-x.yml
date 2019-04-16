@@ -18,8 +18,6 @@ pipelineConfig:
                 value: jenkins-x-bot
               - name: GOOGLE_APPLICATION_CREDENTIALS
                 value: /builder/home/kaniko-secret.json
-              - name: GOMMIT_START_SHA
-                value: ${PULL_BASE_SHA}
             steps:
               - command: make
                 args:

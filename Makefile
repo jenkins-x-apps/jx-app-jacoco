@@ -15,8 +15,6 @@ os = $(word 1, $@)
 
 DOCKER_REGISTRY ?= docker.io
 
-GOMMIT_START_SHA ?= 01b8d360a549e0a80b9fc9c587b69bba616e8d85
-
 FGT := $(GOPATH)/bin/fgt
 GOLINT := $(GOPATH)/bin/golint
 GOMMIT := $(GOPATH)/bin/gommit
@@ -46,7 +44,7 @@ check: $(GOLINT) $(FGT) $(GOMMIT)
 	@echo "VETTING"
 	@$(GO_VARS) $(FGT) go vet $(PACKAGE_DIRS)
 	@echo "CONVENTIONAL COMMIT CHECK"
-	@$(GOMMIT) check range $(GOMMIT_START_SHA) $$(git log --pretty=format:'%H' -n 1)
+	@$(GOMMIT) check range $(PULL_BASE_SHA) $$(git log --pretty=format:'%H' -n 1)
 
 .PHONY : run
 run: $(OS) ## Runs the app locally
