@@ -20,7 +20,8 @@ GOLINT := $(GOPATH)/bin/golint
 GOMMIT := $(GOPATH)/bin/gommit
 
 .PHONY : all
-all: linux test check ## Compiles, test and verifies source
+all: check ## Compiles, test and verifies source
+#all: linux test check ## Compiles, test and verifies source
 
 .PHONY: $(PLATFORMS)
 $(PLATFORMS):	
@@ -44,6 +45,7 @@ check: $(GOLINT) $(FGT) $(GOMMIT)
 	@echo "VETTING"
 	@$(GO_VARS) $(FGT) go vet $(PACKAGE_DIRS)
 	@echo "CONVENTIONAL COMMIT CHECK"
+	@echo $(PULL_BASE_SHA)
 	@$(GOMMIT) check range $(PULL_BASE_SHA) $$(git log --pretty=format:'%H' -n 1)
 
 .PHONY : run
