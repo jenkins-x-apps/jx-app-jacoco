@@ -20,8 +20,10 @@ GOLINT := $(GOPATH)/bin/golint
 GOMMIT := $(GOPATH)/bin/gommit
 
 .PHONY : all
-all: check ## Compiles, test and verifies source
-#all: linux test check ## Compiles, test and verifies source
+all: ## Compiles, test and verifies source
+##all: linux test check ## Compiles, test and verifies source
+	@echo "PULL BASE SHA"
+	@echo $(PULL_BASE_SHA)
 
 .PHONY: $(PLATFORMS)
 $(PLATFORMS):	
