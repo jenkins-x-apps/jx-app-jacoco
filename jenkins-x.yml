@@ -21,7 +21,7 @@ pipelineConfig:
             steps:
               - command: make
                 args:
-                  - all
+                  - check
     release:
       pipeline:
         agent:
