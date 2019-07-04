@@ -31,12 +31,10 @@ Using the [jx command line tool](https://jenkins-x.io/getting-started/install/),
 $ jx add app jx-app-jacoco --repository http://chartmuseum.jenkins-x.io
 ```
 
-NOTE: The syntax of this command is evolving and will change.
-
 After the installation, you can view the status of jx-app-jacoco via:
 
 ```bash
-$ helm status jx-app-jacoco
+$ jx get app jx-app-jacoco
 ```
 
 ### Configuration
@@ -45,54 +43,14 @@ The following table lists the configurable parameters of the App their default v
 
 | Parameter                  | Description                                    | Default   |
 |----------------------------|------------------------------------------------|-----------|
-| logLevel                   | Log level ([trace|debug|info|warn|error])      | info      |
+| LOG_LEVEL                  | Log level ([trace|debug|info|warn|error])      | info      |
 
 ## Usage
 
 The current usage of jx-app-jacoco is limited to Maven projects.
-You must configure the build section of your Maven POM file for JaCoCo to generate an XML report in addition to the default jacoco.exec file.
 
-Example Maven POM file:
 
-```xml
-<build>
-  <plugins>
-     <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-     </plugin>
-     <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.2</version>
-        <executions>
-           <execution>
-              <id>default-prepare-agent</id>
-              <goals>
-                 <goal>prepare-agent</goal>
-              </goals>
-           </execution>
-           <execution>
-              <id>prepare-xml-report</id>
-              <goals>
-                 <goal>report</goal>
-              </goals>
-              <phase>verify</phase>
-           </execution>
-        </executions>
-     </plugin>
- </plugins>
-</build>
-```
-NOTE: We have an open issue to not have to generate the XML report in the project.
-
-Ensure that your _Jenkinsfile_ includes the following command, so the JaCoCo XML report is stored for later retrieval by this app.
-
-```bash
-sh "jx step stash --pattern=target/site/jacoco/jacoco.xml --classifier=jacoco"
-```
-
-JaCoCo code coverage facts for each build will now be stored in a Fact custom resource.
+JaCoCo code coverage facts for each build will be stored in a Fact custom resource.
 You can retrieve a given Fact using `kubectl`:
 
 ```bash
@@ -213,52 +171,6 @@ $ make check
 
 ```bash   
 $ make clean
-```
-
-### Running the app in development
-
-#### Prerequisites
-
-* Setup a Jenkins X environment
-  * [Download jx](https://jenkins-x.io/getting-started/install/)
-  * [Setup cluster](https://jenkins-x.io/getting-started/create-cluster/),
-    eg:
-
-    ```bash
-    $ jx create cluster gke --prow
-    ```
-
-  * Follow the instructions to complete the cluster setup
-
-#### Locally
-
-You can run the compiled binary locally for easy development.
-To do so, you need to export the required configuration options in your shell.
-
-```
-$ make run
-```
-
-#### In Dev Pod
-
-* Open a [Dev Pod](https://jenkins-x.io/developing/devpods/)
-* In Dev Pod
-
-  ```
-  # Run once
-  $ helm install --name jx-app-jacoco --set image.repository=$DOCKER_REGISTRY/jenkinsxio/jx-app-jacoco charts/jx-app-jacoco/
-    
-   # Run after successive changes
-   $ make skaffold-run
-    
-   # To delete
-   $ helm delete --purge jx-app-jacoco
-  ```
-
-__TIP__: If you get an error of the form `Error: pods is forbidden: User "system:serviceaccount:jx:knative-build-bot" cannot list pods in the namespace "kube-system”`, run the following patch command:
-
-```bash
-$ kubectl patch clusterrole/knative-build-bot --type 'json' -p '[{"path": "/rules/2/verbs/1", "value": "list", "op": "add"}]'
 ```
 
 ## How to contribute

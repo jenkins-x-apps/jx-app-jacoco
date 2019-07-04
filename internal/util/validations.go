@@ -11,11 +11,11 @@ import (
 func IsNotEmpty(value interface{}, key string) error {
 	s, ok := value.(string)
 	if !ok {
-		return errors.New(fmt.Sprintf("Value for %s needs to be a string.", key))
+		return errors.New(fmt.Sprintf("value for '%s' needs to be a string", key))
 	}
 
 	if len(s) == 0 {
-		return errors.New(fmt.Sprintf("Value for %s cannot be empty.", key))
+		return errors.New(fmt.Sprintf("value for ''%s cannot be empty", key))
 	}
 	return nil
 
@@ -25,7 +25,7 @@ func IsNotEmpty(value interface{}, key string) error {
 func IsInt(value interface{}, key string) error {
 	_, err := strconv.Atoi(value.(string))
 	if err != nil {
-		return errors.New(fmt.Sprintf("Value for %s needs to be an integer.", key))
+		return errors.New(fmt.Sprintf("value for '%s' needs to be an integer", key))
 	}
 	return nil
 }
@@ -34,7 +34,7 @@ func IsInt(value interface{}, key string) error {
 func IsBool(value interface{}, key string) error {
 	_, err := strconv.ParseBool(value.(string))
 	if err != nil {
-		return errors.New(fmt.Sprintf("Value for %s needs to be an bool.", key))
+		return errors.New(fmt.Sprintf("value for '%s' needs to be an bool", key))
 	}
 	return nil
 }

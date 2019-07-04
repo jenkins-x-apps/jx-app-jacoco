@@ -3,5 +3,15 @@ kind: App
 metadata:
     name: {{ template "fullname" . }}
     labels:
+        jenkins.io/app-type: pipeline-extension
         chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
-spec: {}
+spec:
+    pipelineExtension:
+        name: JaCoCo
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        command: /jx-app-jacoco
+        args:
+            - configure
+
+
+

@@ -2,7 +2,10 @@ SHELL := /bin/bash
 OS := $(shell uname | tr '[:upper:]' '[:lower:]')
 
 GO_VARS := GO111MODULE=on GO15VENDOREXPERIMENT=1 CGO_ENABLED=0
-BUILDFLAGS := ''
+REV := $(shell git rev-parse --short HEAD 2> /dev/null || echo 'unknown')
+IMAGE ?= jenkinsxio/jx-app-jacoco
+VERSION ?= 0.0.0-dev-$(REV)
+BUILDFLAGS := '-X github.com/jenkins-x-apps/jx-app-jacoco/internal/version.binaryVersion=$(VERSION) -X github.com/jenkins-x-apps/jx-app-jacoco/internal/version.imageName=$(IMAGE)'
 
 APP_NAME := jx-app-jacoco
 MAIN := cmd/jacoco/main.go
@@ -30,11 +33,11 @@ $(PLATFORMS):
 
 .PHONY : test
 test: ## Runs unit tests
-	$(GO_VARS) go test -v $(PACKAGE_DIRS) 
+	$(GO_VARS) go test -v ./...
 
 .PHONY : fmt
 fmt: ## Re-formates Go source files according to standard
-	@$(GO_VARS) go fmt $(PACKAGE_DIRS)
+	@$(GO_VARS) go fmt ./...
 
 .PHONY : clean
 clean: ## Deletes the build directory with all generated artefacts
@@ -42,15 +45,11 @@ clean: ## Deletes the build directory with all generated artefacts
 
 check: $(GOLINT) $(FGT) $(GOMMIT)
 	@echo "LINTING"
-	@$(FGT) $(GOLINT) $(PACKAGE_DIRS)
+	@$(FGT) $(GOLINT) ./...
 	@echo "VETTING"
-	@$(GO_VARS) $(FGT) go vet $(PACKAGE_DIRS)
+	@$(GO_VARS) $(FGT) go vet ./...
 	@echo "CONVENTIONAL COMMIT CHECK"
 	@$(GOMMIT) check range $(GOMMIT_START_SHA) $$(git log --pretty=format:'%H' -n 1)
-
-.PHONY : run
-run: $(OS) ## Runs the app locally
-	$(BUILD_DIR)/$(APP_NAME)
 
 .PHONY: watch
 watch: ## Watches for file changes in Go source files and re-runs 'skaffold build'. Requires entr
@@ -69,7 +68,7 @@ help: ## Prints this help
 	@grep -E '^[^.]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-40s\033[0m %s\n", $$1, $$2}'	
 
 .PHONY: release
-release: linux test check update-release-version skaffold-build release-branch ## Creates a release
+release: linux test check update-release-version skaffold-build detach-and-release ## Creates a release
 	cd charts/jx-app-jacoco && jx step helm release
 	jx step changelog --version v$(VERSION) -p $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 2p) master) -r $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 1p) master)
 
@@ -86,9 +85,9 @@ else
 	exit -1
 endif
 
-.PHONY: release-branch
-release-branch:  ## Creates release branch and pushes release
-	git checkout -b release-v$(VERSION)
+.PHONY: detach-and-release
+detach-and-release:  ## Gets into detached HEAD mode and  pushes release
+	git checkout $(shell git rev-parse HEAD)
 	git add --all
 	git commit -m "release $(VERSION)" --allow-empty # if first release then no version update is performed
 	git tag -fa v$(VERSION) -m "Release version $(VERSION)"

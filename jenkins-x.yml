@@ -6,7 +6,7 @@ pipelineConfig:
         agent:
           image: gcr.io/jenkinsxio/builder-go:0.1.339
         stages:
-          - name: release
+          - name: ci
             environment:
               - name: GIT_COMMITTER_EMAIL
                 value: jenkins-x@googlegroups.com

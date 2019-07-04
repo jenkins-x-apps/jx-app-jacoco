@@ -3,8 +3,9 @@ package report
 import (
 	"encoding/xml"
 	"github.com/jenkins-x/jx/pkg/cloud/buckets"
-	"github.com/jenkins-x/jx/pkg/jx/cmd"
-	"github.com/jenkins-x/jx/pkg/jx/cmd/clients"
+	"github.com/jenkins-x/jx/pkg/cmd/clients"
+	"github.com/jenkins-x/jx/pkg/cmd/opts"
+	"github.com/jenkins-x/jx/pkg/cmd/step"
 	"time"
 )
 
@@ -21,14 +22,14 @@ type defaultRetriever struct {
 }
 
 func (r *defaultRetriever) getRawReport(namepace string, url string) ([]byte, error) {
-	common := cmd.NewCommonOptions(namepace, clients.NewFactory())
+	common := opts.NewCommonOptionsWithFactory(clients.NewFactory())
 
 	authSvc, err := common.CreateGitAuthConfigService()
 	if err != nil {
 		return nil, err
 	}
 
-	data, err := buckets.ReadURL(url, timeout, cmd.CreateBucketHTTPFn(authSvc))
+	data, err := buckets.ReadURL(url, timeout, step.CreateBucketHTTPFn(authSvc))
 	if err != nil {
 		return nil, err
 	}

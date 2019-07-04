@@ -6,7 +6,7 @@ import (
 )
 
 const (
-	// AppName is tge application name for logging.
+	// AppName is the application name for logging.
 	AppName = "jx-app-jacoco"
 )
 
@@ -30,7 +30,6 @@ func SetLevel(s string) error {
 	if err != nil {
 		return err
 	}
-	logger.Infof("logging set to level: %s", level)
 	log.SetLevel(level)
 	return nil
 }

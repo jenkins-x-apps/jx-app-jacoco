@@ -17,8 +17,8 @@ func Test_IsBool(t *testing.T) {
 		{"false", false, []string{}},
 		{"0", false, []string{}},
 		{"1", true, []string{}},
-		{"snafu", false, []string{"Value for FOO needs to be an bool."}},
-		{"", false, []string{"Value for FOO needs to be an bool."}},
+		{"snafu", false, []string{"value for 'FOO' needs to be an bool"}},
+		{"", false, []string{"value for 'FOO' needs to be an bool"}},
 	}
 
 	for _, testBool := range testBools {

@@ -1,4 +1,4 @@
-package cluster
+package fact
 
 import (
 	"fmt"
@@ -69,8 +69,8 @@ func (m *mockFactInterface) PatchUpdate(*jenkinsv1.Fact) (*jenkinsv1.Fact, error
 
 func TestUpdatePipelineUpdateOperationIsRetried(t *testing.T) {
 	mock := &mockFactInterface{}
-	handler := defaultEventHandler{}
-	handler.storeFact(dummyFact, mock)
+	err := StoreFact(dummyFact, mock)
+	assert.NoError(t, err)
 	assert.Equal(t, 3, mock.createCount, "Expected get to be called 3 times")
 }
 
@@ -87,9 +87,7 @@ func TestCreateFact(t *testing.T) {
 	}
 
 	url := "http://dummy"
-
-	handler := defaultEventHandler{}
-	fact := handler.createFact(report, pipelineActivity, url)
+	fact := CreateFact(report, pipelineActivity, url)
 
 	expectedName := fmt.Sprintf("%s-%s-%s", appName, jenkinsv1.FactTypeCoverage, pipelineActivity.Name)
 	assert.Equal(t, expectedName, fact.Spec.Name)

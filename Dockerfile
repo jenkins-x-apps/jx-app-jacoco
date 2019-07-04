@@ -1,4 +1,4 @@
-FROM alpine:3.9
+FROM maven:3.6.1-ibmjava-alpine
 
 RUN apk --update add ca-certificates
 
