@@ -53,19 +53,25 @@ pipelineConfig:
               - name: GIT_AUTHOR_NAME
                 value: jenkins-x-bot
               - name: GOOGLE_APPLICATION_CREDENTIALS
-                value: /builder/home/kaniko-secret.json
+                value: /kaniko-secret/kaniko-secret.json
             steps:
+              - image: busybox
+                command: sleep
+                args:
+                  - infinity
               - image: golang:1.12.13
                 command: make
                 args:
                   - linux
                   - test
                   - check
-              - command: make
-                args:
-                  - release-chart
+
               - name: build-and-push-image
                 image: gcr.io/kaniko-project/executor:9912ccbf8d22bbafbf971124600fbb0b13b9cbd6
                 command: /kaniko/executor
                 args: ['--dockerfile=/workspace/source/Dockerfile','--destination=gcr.io/jenkinsxio/jx-app-jacoco:$(inputs.params.version)','--context=/workspace/source','--cache-dir=/workspace']
+
+              - command: make
+                args:
+                  - release-chart
 
