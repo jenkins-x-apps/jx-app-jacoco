@@ -4,12 +4,18 @@ metadata:
   name: {{ template "fullname" . }}
   labels:
     app: {{ template "fullname" . }}
+    release: {{ .Release.Name }}
 spec:
+  selector:
+    matchLabels:
+      app: {{ template "nexus.name" . }}
+      release: {{ .Release.Name }}
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
         app: {{ template "fullname" . }}
+        release: {{ .Release.Name }}
 {{- if .Values.podAnnotations }}
       annotations:
 {{ toYaml .Values.podAnnotations | indent 8 }}
