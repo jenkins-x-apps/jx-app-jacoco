@@ -45,8 +45,6 @@ check: $(GOLINT) $(FGT) $(GOMMIT)
 	@$(FGT) $(GOLINT) $(PACKAGE_DIRS)
 	@echo "VETTING"
 	@$(GO_VARS) $(FGT) go vet $(PACKAGE_DIRS)
-	@echo "CONVENTIONAL COMMIT CHECK"
-	@$(GOMMIT) check range $(GOMMIT_START_SHA) $$(git log --pretty=format:'%H' -n 1)
 
 .PHONY : run
 run: $(OS) ## Runs the app locally
