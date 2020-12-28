@@ -67,7 +67,7 @@ help: ## Prints this help
 	@grep -E '^[^.]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-40s\033[0m %s\n", $$1, $$2}'	
 
 .PHONY: release
-release: linux test check update-release-version skaffold-build release-branch ## Creates a release
+release: linux test check update-release-version release-branch ## Creates a release
 	cd charts/jx-app-jacoco && jx step helm release
 	jx step changelog --version v$(VERSION) -p $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 2p) master) -r $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 1p) master)
 
