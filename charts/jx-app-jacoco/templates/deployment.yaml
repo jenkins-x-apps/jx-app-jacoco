@@ -8,7 +8,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: {{ template "nexus.name" . }}
+      app: {{ template "fullname" . }}
       release: {{ .Release.Name }}
   replicas: {{ .Values.replicaCount }}
   template:
