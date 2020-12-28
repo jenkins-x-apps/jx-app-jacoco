@@ -31,6 +31,18 @@ pipelineConfig:
           image: gcr.io/jenkinsxio/builder-go:2.1.155-778
         stages:
           - name: release
+            options:
+              volumes:
+                - name: kaniko-secret
+                  secret:
+                    secretName: kaniko-secret
+                    items:
+                      - key: kaniko-secret
+                        path: kaniko/kaniko-secret.json
+              containerOptions:
+                volumeMounts:
+                  - name: kaniko-secret
+                    mountPath: /secrets
             environment:
               - name: GIT_COMMITTER_EMAIL
                 value: jenkins-x@googlegroups.com
