@@ -53,12 +53,9 @@ pipelineConfig:
               - name: GIT_AUTHOR_NAME
                 value: jenkins-x-bot
               - name: GOOGLE_APPLICATION_CREDENTIALS
-                value: /kaniko-secret/kaniko-secret.json
+                value: /secrets/kaniko/kaniko-secret.json
             steps:
-              - image: busybox
-                command: sleep
-                args:
-                  - infinity
+
               - image: golang:1.12.13
                 command: make
                 args:
