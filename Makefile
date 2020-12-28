@@ -71,6 +71,11 @@ release: linux test check update-release-version ## Creates a release
 	cd charts/jx-app-jacoco && jx step helm release
 	jx step changelog --version v$(VERSION) -p $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 2p) master) -r $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 1p) master)
 
+.PHONY: release-chart
+release: update-release-version ## Creates a release
+	cd charts/jx-app-jacoco && jx step helm release
+	jx step changelog --version v$(VERSION) -p $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 2p) master) -r $$(git merge-base $$(git for-each-ref --sort=-creatordate --format='%(objectname)' refs/tags | sed -n 1p) master)
+
 .PHONY: update-release-version
 update-release-version: ## Updates the release version
 ifeq ($(OS),darwin)
